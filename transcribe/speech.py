@@ -58,6 +58,8 @@ class Speech(object):
         audio_format = "ogg"
         # https://github.com/jiaaro/pydub/blob/master/pydub/audio_segment.py
         audio = pydub.AudioSegment.from_file(path)
+        logger.info("_convert framerate: %s", audio.frame_rate)
+        self._convert_framerate = audio.frame_rate
         if bool(start) or bool(stop):
             start = Time(start)
             stop = Time(stop)
@@ -127,9 +129,16 @@ class Speech(object):
         # limited to ~180 Minutes
         recog = types.RecognitionAudio(uri=uri)
         # https://cloud.google.com/speech/reference/rest/v1/RecognitionConfig
+        logger.info("Frame rate: %s", audio.frame_rate)
+        avail_fr = [8000, 12000, 16000, 24000, 48000]
+        dist = [abs(self._convert_framerate - x) for x in avail_fr]
+        min_dist = min(dist)
+        match = dist.index(min_dist)
+        actual_fr = avail_fr[match]
+        logger.info("Frame rate from convert, converted: %s", actual_fr)
         config = types.RecognitionConfig(
             encoding=enums.RecognitionConfig.AudioEncoding.OGG_OPUS,
-            sample_rate_hertz=audio.frame_rate,
+            sample_rate_hertz=actual_fr,
             language_code=self.lang,
             enable_word_time_offsets=True
         )
@@ -158,13 +167,14 @@ class Speech(object):
         for result in self.response.results:
             alternative = result.alternatives[0]
             text = String(alternative.transcript).flow()
+            conf = alternative.confidence
 
             # https://cloud.google.com/speech/docs/async-time-offsets
             word_info = alternative.words[0]
             # TODO -- we have a nanos property also, do we care about
             # nanoseconds?
             start_time = Time(word_info.start_time.seconds)
-            yield start_time, text
+            yield start_time, conf, text
 
 #         for result in response.results:
 #             # The first alternative is the most likely one for this portion.

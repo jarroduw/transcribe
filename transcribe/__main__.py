@@ -60,8 +60,8 @@ def main_speech(paths, start, stop, lang):
         f = Speech(path, lang)
         f.scan(start, stop)
 
-        for time, text in f:
-            echo.out("{:<15}{}", time, text)
+        for time, conf, text in f:
+            echo.out("%s\t%s\t%s" % (time, conf, text,))
 
 
 # allows for setup.py console scripts

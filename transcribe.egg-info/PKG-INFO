@@ -1,0 +1,18 @@
+Metadata-Version: 1.1
+Name: transcribe
+Version: 0.0.7
+Summary: Convert images or audio files to plain text on the command line
+Home-page: http://github.com/Jaymon/transcribe
+Author: Jay Marcyes
+Author-email: jay@marcyes.com
+License: MIT
+Description: UNKNOWN
+Keywords: ocr transcription speech-to-text speech-recognition command-line-tool
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: Topic :: Text Processing
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2.7
